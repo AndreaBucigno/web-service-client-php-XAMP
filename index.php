@@ -20,10 +20,10 @@
                 <form action="handler.php" method="POST">
                     <div class="row g-3 align-items-center">
                         <div class="col-md-4">
-                            <input type="text" class="form-control" name="nome" placeholder="Nome">
+                            <input type="text" class="form-control" name="nome" placeholder="Nome" required>
                         </div>
                         <div class="col-md-4">
-                            <input type="email" class="form-control" name="email" placeholder="Email">
+                            <input type="email" class="form-control" name="email" placeholder="Email" required>
                         </div>
                         <div class="col-md-auto">
                             <button type="submit" class="btn btn-primary px-4">Inserisci</button>
@@ -40,13 +40,13 @@
                 <form class="mb-4" method="GET" action="handler.php">
                     <div class="row g-2 align-items-center">
                         <div class="col-md-4">
-                            <input type="text" class="form-control" name="cerca_nome" placeholder="Cerca per Nome esatto">
+                            <input type="text" class="form-control" name="cerca_nome" placeholder="Cerca per Nome esatto" required>
                         </div>
                         <div class="col-md-auto">
                             <button type="submit" class="btn btn-primary px-3">Cerca</button>
                         </div>
                         <div class="col-md-auto">
-                            <button type="button" class="btn btn-primary px-3">Vedi Tutti</button>
+                            <a href="index.php" class="btn btn-secondary px-3">Vedi Tutti</a>
                         </div>
                     </div>
                 </form>
@@ -62,7 +62,32 @@
                         </thead>
                         <tbody>
                             <?php
-                            // Codice per recuperare e visualizzare gli utenti
+                            // Includiamo la connessione al database
+                            require_once 'db.php';
+
+                            // Controlliamo se stiamo cercando un nome specifico
+                            if (isset($_GET['cerca_nome']) && !empty($_GET['cerca_nome'])) {
+                                $stmt = $pdo->prepare('SELECT * FROM users WHERE nome = :nome');
+                                $stmt->execute(['nome' => $_GET['cerca_nome']]);
+                            } else {
+                                // Altrimenti prendiamo tutti gli utenti
+                                $stmt = $pdo->query('SELECT * FROM users');
+                            }
+
+                            $utenti = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                            // Stampiamo i risultati
+                            if ($utenti) {
+                                foreach ($utenti as $utente) {
+                                    echo "<tr>";
+                                    echo "<td>" . htmlspecialchars($utente['ID']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($utente['nome']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($utente['email']) . "</td>";
+                                    echo "</tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='3' class='text-center text-muted'>Nessun utente trovato</td></tr>";
+                            }
                             ?>
                         </tbody>
                     </table>
@@ -76,13 +101,13 @@
                 <form action="handler.php" method="POST">
                     <div class="row g-3 align-items-center">
                         <div class="col-md-3">
-                            <input type="text" class="form-control" name="id" placeholder="ID Utente">
+                            <input type="number" class="form-control" name="id" placeholder="ID Utente" required>
                         </div>
                         <div class="col-md-4">
-                            <input type="text" class="form-control" name="nuovo_nome" placeholder="Nuovo Nome">
+                            <input type="text" class="form-control" name="nuovo_nome" placeholder="Nuovo Nome" required>
                         </div>
                         <div class="col-md-4">
-                            <input type="email" class="form-control" name="nuova_email" placeholder="Nuova Email">
+                            <input type="email" class="form-control" name="nuova_email" placeholder="Nuova Email" required>
                         </div>
                         <div class="col-md-auto">
                             <button type="submit" class="btn btn-primary px-4">Aggiorna</button>
@@ -98,7 +123,7 @@
                 <form action="handler.php" method="POST">
                     <div class="row g-3 align-items-center">
                         <div class="col-md-4">
-                            <input type="text" class="form-control" name="id_elimina" placeholder="ID Utente da eliminare">
+                            <input type="number" class="form-control" name="id_elimina" placeholder="ID Utente da eliminare" required>
                         </div>
                         <div class="col-md-auto">
                             <button type="submit" class="btn btn-danger px-4">Elimina</button>
