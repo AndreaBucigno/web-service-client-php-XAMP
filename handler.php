@@ -1,8 +1,8 @@
 <?php
 
 require_once 'db.php';
+//Bucigno gestione CRUD utenti 07-06-2024
 
-// GESTIONE RICHIESTE POST (Inserisci, Aggiorna, Elimina)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['nome'], $_POST['email']) && !isset($_POST['id'])) {
         $stmt = $pdo->prepare('INSERT INTO users (nome, email) VALUES (:nome, :email)');
@@ -30,9 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // GESTIONE RICHIESTE GET (Ricerca)
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    // 4. READ (Ricerca specifica): Se ricevo 'cerca_nome'
+    // READ (Ricerca specifica): Se ricevo 'cerca_nome'
     if (isset($_GET['cerca_nome'])) {
-        // Reindirizza all'index passando il parametro nell'URL
         $nome_cercato = urlencode($_GET['cerca_nome']);
         header("Location: index.php?cerca_nome=" . $nome_cercato);
         exit;

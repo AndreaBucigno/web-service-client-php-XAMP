@@ -1,3 +1,27 @@
+<?php
+require_once 'db.php';
+$variabile = "";
+if (isset($_GET['cerca_nome']) && !empty($_GET['cerca_nome'])) {
+    $stmt = $pdo->prepare('SELECT * FROM users WHERE nome = :nome');
+    $stmt->execute(['nome' => $_GET['cerca_nome']]);
+} else {
+    $stmt = $pdo->query('SELECT * FROM users');
+}
+$utenti = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Costruiamo le righe della tabella
+if ($utenti) {
+    foreach ($utenti as $utente) {
+        $variabile .= "<tr>";
+        $variabile .= "<td>" . htmlspecialchars($utente['ID']) . "</td>";
+        $variabile .= "<td>" . htmlspecialchars($utente['nome']) . "</td>";
+        $variabile .= "<td>" . htmlspecialchars($utente['email']) . "</td>";
+        $variabile .= "</tr>";
+    }
+} else {
+    $variabile = "<tr><td colspan='3' class='text-center text-muted'>Nessun utente trovato</td></tr>";
+}
+?>
 <!DOCTYPE html>
 <html lang="it">
 
@@ -7,6 +31,7 @@
     <title>Dashboard Utenti</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
+
 </head>
 
 <body>
@@ -37,7 +62,7 @@
             <div class="card-body">
                 <h4 class="card-title fw-bold mb-4">Cerca Utenti (GET)</h4>
 
-                <form class="mb-4" method="GET" action="handler.php">
+                <form class="mb-4" method="GET" action="index.php">
                     <div class="row g-2 align-items-center">
                         <div class="col-md-4">
                             <input type="text" class="form-control" name="cerca_nome" placeholder="Cerca per Nome esatto" required>
@@ -61,34 +86,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
-                            // Includiamo la connessione al database
-                            require_once 'db.php';
-
-                            // Controlliamo se stiamo cercando un nome specifico
-                            if (isset($_GET['cerca_nome']) && !empty($_GET['cerca_nome'])) {
-                                $stmt = $pdo->prepare('SELECT * FROM users WHERE nome = :nome');
-                                $stmt->execute(['nome' => $_GET['cerca_nome']]);
-                            } else {
-                                // Altrimenti prendiamo tutti gli utenti
-                                $stmt = $pdo->query('SELECT * FROM users');
-                            }
-
-                            $utenti = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                            // Stampiamo i risultati
-                            if ($utenti) {
-                                foreach ($utenti as $utente) {
-                                    echo "<tr>";
-                                    echo "<td>" . htmlspecialchars($utente['ID']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($utente['nome']) . "</td>";
-                                    echo "<td>" . htmlspecialchars($utente['email']) . "</td>";
-                                    echo "</tr>";
-                                }
-                            } else {
-                                echo "<tr><td colspan='3' class='text-center text-muted'>Nessun utente trovato</td></tr>";
-                            }
-                            ?>
+                            <?php echo $variabile; ?>
                         </tbody>
                     </table>
                 </div>
