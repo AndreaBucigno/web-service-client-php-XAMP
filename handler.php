@@ -1,7 +1,7 @@
 <?php
 
 require_once 'db.php';
-//Bucigno gestione CRUD utenti 07-06-2024
+//Bucigno gestione CRUD utenti
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['nome'], $_POST['email']) && !isset($_POST['id'])) {
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // GESTIONE RICHIESTE GET (Ricerca)
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    // READ (Ricerca specifica): Se ricevo 'cerca_nome'
+    //(Ricerca specifica): Se ricevo 'cerca_nome'
     if (isset($_GET['cerca_nome'])) {
         $nome_cercato = urlencode($_GET['cerca_nome']);
         header("Location: index.php?cerca_nome=" . $nome_cercato);
